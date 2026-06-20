@@ -1,0 +1,26 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+
+# environment
+.env
+
+# logs
+logs/
+*.log
+
+# uploads
+files/
+
+# os
+.DS_Store
+Thumbs.db
+
+# editor
+.vscode/
+.idea/
+
+# claude
+.claude/
