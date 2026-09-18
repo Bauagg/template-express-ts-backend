@@ -23,3 +23,11 @@ export const findUserById = async (id: string, t?: Transaction) => {
 export const createUser = async (data: UserCreationAttributes, t?: Transaction) => {
   return User.create(data, { transaction: t });
 };
+
+export const updateUser = async (id: string, data: Partial<UserCreationAttributes>, t?: Transaction) => {
+  return User.update(data, { where: { id }, transaction: t });
+};
+
+export const deleteUser = async (id: string, t?: Transaction) => {
+  return User.destroy({ where: { id }, transaction: t });
+};

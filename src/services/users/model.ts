@@ -1,6 +1,9 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import sequelize from '../../databases';
 
+// nilai role khusus/reserved untuk pemilik grup usaha, wajib persis 'Owner' (kapital)
+export const OWNER_ROLE = 'Owner';
+
 export interface UserAttributes {
   id: string;
   username: string;
@@ -11,13 +14,16 @@ export interface UserAttributes {
   full_name: string;
   photo_id: string | null;
   photo_url: string | null;
+  agree: boolean;
+  company_id?: string | null;
+  header_id?: string | null;
   created_at?: Date;
   updated_at?: Date;
   deleted_at?: Date | null;
 }
 
 export interface UserCreationAttributes
-  extends Optional<UserAttributes, 'id' | 'photo_id' | 'photo_url' | 'deleted_at'> {}
+  extends Optional<UserAttributes, 'id' | 'photo_id' | 'photo_url' | 'company_id' | 'header_id' | 'deleted_at'> {}
 
 class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
   declare id: string;
@@ -29,6 +35,9 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
   declare full_name: string;
   declare photo_id: string | null;
   declare photo_url: string | null;
+  declare agree: boolean;
+  declare company_id: string | null;
+  declare header_id: string | null;
   declare created_at: Date;
   declare updated_at: Date;
   declare deleted_at: Date | null;
@@ -106,6 +115,28 @@ User.init(
     },
     photo_url: {
       type: DataTypes.STRING,
+      allowNull: true,
+      defaultValue: null,
+    },
+    agree: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      validate: {
+        notNull: { msg: 'Persetujuan syarat dan ketentuan wajib diisi' },
+        isTrue(value: boolean) {
+          if (value !== true) {
+            throw new Error('Anda harus menyetujui syarat dan ketentuan');
+          }
+        },
+      },
+    },
+    company_id: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      defaultValue: null,
+    },
+    header_id: {
+      type: DataTypes.UUID,
       allowNull: true,
       defaultValue: null,
     },

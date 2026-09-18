@@ -1,0 +1,118 @@
+import { DataTypes, Model, Optional } from 'sequelize';
+import sequelize from '../../databases';
+
+export interface RoleMenuPermissionAttributes {
+  id: string;
+  flex_param_menu_id: string;
+  owner_id?: string | null;
+  user_id: string;
+  flex_param_role_id: string;
+  created_at?: Date;
+  created_by: string;
+  updated_at?: Date;
+  updated_by: string;
+  deleted_at?: Date | null;
+  deleted_by?: string | null;
+}
+
+export interface RoleMenuPermissionCreationAttributes
+  extends Optional<RoleMenuPermissionAttributes, 'id' | 'owner_id' | 'deleted_at' | 'deleted_by'> {}
+
+class RoleMenuPermission
+  extends Model<RoleMenuPermissionAttributes, RoleMenuPermissionCreationAttributes>
+  implements RoleMenuPermissionAttributes
+{
+  declare id: string;
+  declare flex_param_menu_id: string;
+  declare owner_id: string | null;
+  declare user_id: string;
+  declare flex_param_role_id: string;
+  declare created_at: Date;
+  declare created_by: string;
+  declare updated_at: Date;
+  declare updated_by: string;
+  declare deleted_at: Date | null;
+  declare deleted_by: string | null;
+}
+
+RoleMenuPermission.init(
+  {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+    },
+    flex_param_menu_id: {
+      type: DataTypes.UUID,
+      allowNull: false,
+      validate: {
+        notNull: { msg: 'Flex param menu ID wajib diisi' },
+        isUUID: { args: 4, msg: 'Flex param menu ID harus berupa UUID valid' },
+      },
+    },
+    owner_id: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      defaultValue: null,
+    },
+    user_id: {
+      type: DataTypes.UUID,
+      allowNull: false,
+      validate: {
+        notNull: { msg: 'User ID wajib diisi' },
+        isUUID: { args: 4, msg: 'User ID harus berupa UUID valid' },
+      },
+    },
+    flex_param_role_id: {
+      type: DataTypes.UUID,
+      allowNull: false,
+      validate: {
+        notNull: { msg: 'Flex param role ID wajib diisi' },
+        isUUID: { args: 4, msg: 'Flex param role ID harus berupa UUID valid' },
+      },
+    },
+    created_by: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+      validate: {
+        notNull: { msg: 'Created by wajib diisi' },
+        notEmpty: { msg: 'Created by tidak boleh kosong' },
+      },
+    },
+    updated_by: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+      validate: {
+        notNull: { msg: 'Updated by wajib diisi' },
+        notEmpty: { msg: 'Updated by tidak boleh kosong' },
+      },
+    },
+    deleted_by: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      defaultValue: null,
+    },
+  },
+  {
+    sequelize,
+    tableName: 'role_menu_permissions',
+    underscored: true,
+    paranoid: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
+    deletedAt: 'deleted_at',
+    indexes: [
+      {
+        // nama index dibuat manual & pendek, karena nama auto-generate dari sequelize
+        // melebihi batas 63 karakter postgres lalu terpotong, sehingga sync({ alter: true })
+        // menganggap index belum ada dan mencoba membuatnya lagi setiap restart
+        name: 'role_menu_permissions_owner_role_menu_unique',
+        unique: true,
+        fields: ['owner_id', 'flex_param_role_id', 'flex_param_menu_id'],
+        where: { deleted_at: null },
+      },
+    ],
+  }
+);
+
+export default RoleMenuPermission;

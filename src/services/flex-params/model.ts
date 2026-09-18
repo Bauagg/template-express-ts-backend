@@ -7,9 +7,15 @@ export interface FlexParamAttributes {
   value_param: string;
   description?: string | null;
   user_id: string;
+  owner_id?: string | null;
   photo_id?: string | null;
   photo_url?: string | null;
   header_id?: string | null;
+  level: number;
+  icon?: string | null;
+  color_icon?: string | null;
+  color_bg_icon?: string | null;
+  active: boolean;
   created_at?: Date;
   created_by: string;
   updated_at?: Date;
@@ -19,7 +25,7 @@ export interface FlexParamAttributes {
 }
 
 export interface FlexParamCreationAttributes
-  extends Optional<FlexParamAttributes, 'id' | 'description' | 'photo_id' | 'photo_url' | 'header_id' | 'deleted_at' | 'deleted_by'> {}
+  extends Optional<FlexParamAttributes, 'id' | 'description' | 'owner_id' | 'photo_id' | 'photo_url' | 'header_id' | 'level' | 'icon' | 'color_icon' | 'color_bg_icon' | 'deleted_at' | 'deleted_by' | 'active'> {}
 
 class FlexParam extends Model<FlexParamAttributes, FlexParamCreationAttributes> implements FlexParamAttributes {
   declare id: string;
@@ -27,9 +33,15 @@ class FlexParam extends Model<FlexParamAttributes, FlexParamCreationAttributes> 
   declare value_param: string;
   declare description: string | null;
   declare user_id: string;
+  declare owner_id: string | null;
   declare photo_id: string | null;
   declare photo_url: string | null;
   declare header_id: string | null;
+  declare level: number;
+  declare icon: string | null;
+  declare color_icon: string | null;
+  declare color_bg_icon: string | null;
+  declare active: boolean;
   declare created_at: Date;
   declare created_by: string;
   declare updated_at: Date;
@@ -74,6 +86,11 @@ FlexParam.init(
         isUUID: { args: 4, msg: 'User ID harus berupa UUID valid' },
       },
     },
+    owner_id: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      defaultValue: null,
+    },
     photo_id: {
       type: DataTypes.UUID,
       allowNull: true,
@@ -88,6 +105,31 @@ FlexParam.init(
       type: DataTypes.UUID,
       allowNull: true,
       defaultValue: null,
+    },
+    level: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 1,
+    },
+    icon: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+      defaultValue: null,
+    },
+    color_icon: {
+      type: DataTypes.STRING(50),
+      allowNull: true,
+      defaultValue: null,
+    },
+    color_bg_icon: {
+      type: DataTypes.STRING(50),
+      allowNull: true,
+      defaultValue: null,
+    },
+    active: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true,
     },
     created_by: {
       type: DataTypes.STRING(255),

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import {
   createFlexParam,
+  bulkCreateFlexParam,
   getAllFlexParams,
   getFlexParamById,
   getFlexParamsByType,
@@ -14,6 +15,7 @@ import upload from '../../config/multer';
 const router = Router();
 
 router.post('/', authenticate, upload.single('photo'), createFlexParam);
+router.post('/bulk', authenticate, upload.array('photos'), bulkCreateFlexParam);
 router.get('/', getAllFlexParams);
 router.get('/type/:type_param', getFlexParamsByType);
 router.get('/header/:header_id', getFlexParamsByHeaderId);
